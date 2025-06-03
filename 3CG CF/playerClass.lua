@@ -16,6 +16,11 @@ function PlayerClass:new(screenWidth, screenHeight, deck, discard, num) --num is
   player.discardPile = discard
   player.num = num
   player.score = 0
+  player.isTurn = false --whether it's this player's turn
+  player.zoneType = ZONES.HAND --for accessing by grabber, to get the zone type for what a card is being dropped on
+  player.currMana = 0
+  
+  
   player.position = Vector(screenWidth/5, 0)
  --placeholder, should be 1/2 screen width
   if num == 1 then
@@ -24,8 +29,6 @@ function PlayerClass:new(screenWidth, screenHeight, deck, discard, num) --num is
     player.position.y = screenHeight/7
   end
   player.lastCardPlayed = nil
-  player.isTurn = false --whether it's this player's turn
-  player.zoneType = ZONES.HAND --for accessing by grabber, to get the zone type for what a card is being dropped on
   player.zoneName = "Player " .. player.num
   
   return player

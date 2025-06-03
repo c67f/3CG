@@ -9,6 +9,7 @@ require "gameManagerClass"
 require "grabberClass"
 require "locationClass"
 require "buttonClass"
+require "CPUPlayerClass"
 
 allCards = {}
 
@@ -20,23 +21,24 @@ function love.load()
   love.window.setMode(screenWidth, screenHeight)
   love.graphics.setBackgroundColor(0, 0.8, 0.2)
   
-  gameManager = GameManagerClass:new()
+  --Sprites
   
-  cardSpriteTemplate = SpriteClassCardTemplate:new()
-  print(cardSpriteTemplate:getSprite())
   buttonSpriteTemplate = SpriteClassButton:new() --5/28 10:06: added button and end turn functionality (not tested). last thing done was realize I need to make subclasses for SpriteClass - made (untested) the card sprite subclass, need to make the button one
-  print(buttonSpriteTemplate)
+  --sprites = {cardSpriteTemplate, buttonSpriteTemplate}
   
+  --Deck and discard piles
   deck1 = DeckClass:new()
   discard1 = DiscardPileClass:new()
   deck2 = DeckClass:new()
   discard2 = DiscardPileClass:new()
   
+  --Create player objects
   player1 = PlayerClass:new(screenWidth, screenHeight, deck1, discard1, 1)
   player2 = PlayerClass:new(screenWidth, screenHeight, deck2, discard2, 2)
   players = {player1, player2}
   print("players number: " .. #players)
   
+  --Create locations
   loc1 = LocationClass:new(100, screenHeight/2, 1)
   loc2 = LocationClass:new(screenWidth/2, screenHeight/2, 2)
   loc3 = LocationClass:new(screenWidth-100, screenHeight/2, 3)
@@ -48,30 +50,29 @@ function love.load()
   print (p1Button.sc)
   print(p1Button)
   p1Button:test()
+  
   grabber = GrabberClass:new()
-  --print(grabber.test)
-  --grabber:grab()
   
+  cpuPlayer = CPUPlayerClass:new(player2)
   
-  gameManager:setupGame(player1, player2, cardSpriteTemplate)
+  --default deck lists:
+  decklist1 = {5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5}
+  decklist2 = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4}
+  print("size of decklist1 is " .. #decklist1)
+  
+  --Create gameManager and setup game:
+  gameManager = GameManagerClass:new(player1, cpuPlayer, locations)--sprites
+  gameManager:setupGame(decklist1, decklist2)
   print("player1 cards in hand is: " .. #player1.hand)
-  
-  --newCard = CardClass:new(250, 250, 1, 1, nil, cardSpriteTemplate, player1)
-  --table.insert(deck1.cards, newCard)
-  --newCard2 = CardClass:new(250, 250, 1, 1, nil, cardSpriteTemplate, player1)
-  --table.insert(deck1.cards, newCard2)
-  --print(#deck1.cards)
-  --player1:drawCard(deck1.cards) --why did . instead of : sort of work?)
-  --player1:drawCard(deck1.cards)
-  --table.insert(player1.hand, newCard)
 end
 
 function love.update()
-  --print(grabber)
-  --grabber:grab()
+  --Update players
   player1:update()
   player2:update()
+  --Update grabber
   grabber:update(player1.hand, players, locations) --hmmm...if I use allCards to contain every card (or do something similar) in addition to having each card in its zone's table (e.g. player1.hand) will that work, or will it make duplicates of the cards for each table?
+  --Update end turn button
   p1Button:update(gameManager)
   
   for _, card in ipairs(player1.hand) do 
@@ -118,4 +119,9 @@ function love.draw()
   end
   
   p1Button:draw()
+  
+  love.graphics.print("p1: " .. player1.score, 10, 10)
+  love.graphics.print("p2: " .. player2.score, 10, 40)
+  love.graphics.print("p1 energy: " .. player1.currMana, 10, 500)
+  love.graphics.print("p2 energy: " .. player2.currMana, 700, 30)
 end

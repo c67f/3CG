@@ -39,10 +39,12 @@ function LocationClass:addCard(card)
   if card.owner.num == 1 then
     print("adding to p1 cards")
     table.insert(self.p1Cards, card)
+    card.revealed = false --set card to be face down upon being added to a location
     card.index = #self.p1Cards
   elseif card.owner.num == 2 then
-    print("adding to p1 cards")
+    print("adding to p2 cards")
     table.insert(self.p2Cards, card)
+    card.revealed = false --set card to be face down upon being added to a location
     card.index = #self.p2Cards
   else
     print("error! tried to add a card owned by a player that isn't 1 or 2 to a location")
@@ -50,14 +52,25 @@ function LocationClass:addCard(card)
 end
 
 function LocationClass:getPowerDiff()
+  --print("test")
   self.p1Power = 0
   self.p2Power = 0
-  for _, card in self.p1Cards() do
+  for _, card in ipairs(self.p1Cards) do
     self.p1Power = self.p1Power + card.power
   end
-  for _, card in self.p2Cards() do
+  for _, card in ipairs(self.p2Cards) do
     self.p2Power = self.p2Power + card.power
   end
   diff = self.p1Power - self.p2Power
+  --self.p1Power = 0 --reset after calculating so it doesn't keep increasing every time it's called
+  --self.p2Power = 0
   return diff --positive diff means p1 has more power, negative means p2 does
+end
+
+function LocationClass:getPlayerCards(num)
+  if num == 1 then
+    return self.p1Cards
+  else
+    return self.p2cards
+  end
 end
