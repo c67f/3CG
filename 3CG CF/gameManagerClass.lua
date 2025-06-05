@@ -60,10 +60,10 @@ function GameManagerClass:setupGame(decklist1, decklist2)
   self.p1.score = 0
   self.p2.score = 0
   --print(deck1.cards) --deck1.cards exists here,
-  for i = 1, 5 do
+  for i = 1, 7 do
     self.p1:drawCard(deck1.cards) --but not here? edit: forgot the colon instead of period, that's why
   end
-  for i = 1, 5 do
+  for i = 1, 7 do
     self.p2:drawCard(deck2.cards)
   end
   
@@ -77,12 +77,14 @@ end
 function GameManagerClass:startTurn() --5/31: next thing is mana system and resetting mana on turn start, might need to refactor turn system?
   if self.currentPlayer == 1 then
     if #self.p1.hand < HAND_SIZE then
-      self.p1:drawCard(self.p1.deck)
+      print("drawing card to p1")
+      print(#self.p1.deck)
+      self.p1:drawCard(self.p1.deck.cards) --forgot .cards again
     end
     self.p1.currMana = self.currentRound
   else 
     if #self.p2.hand < HAND_SIZE then
-      self.p2:drawCard(self.p1.deck)
+      self.p2:drawCard(self.p1.deck.cards)
     end
     self.p2.currMana = self.currentRound
   end
@@ -92,8 +94,10 @@ end
 function GameManagerClass:submitCards()
   self.currentPhase = TURN_PHASE[2] --move to end phase
   if self.currentPlayer == 1 then
+    self:endOfTurn(self.currentPlayer)
     self:nextTurn() --only reveal and score cards at the end of player 2's turn
   else
+    self:endOfTurn(self.currentPlayer)
     --reveal all played cards of both players:
     self:revealAllCards() --last thing done 6/1 8:47: reveal cards function and cards having a revealed or unrevealed state, next thing is effects
     
@@ -131,6 +135,9 @@ function GameManagerClass:submitCards()
     elseif self.p2.score >= WIN_THRESHOLD then
       self.winner = self.p2
       self:endGame()
+--    elseif self.p1.score == self.p2.score and self.p2.score >= WIN_THRESHOLD
+--      if scores
+--    end
     else
       self:nextTurn() --go to next player's turn
     end
@@ -165,43 +172,134 @@ function GameManagerClass:readDeck(deckList, deck, player)
       newCow = CowDataClass:new()
       --print(newCow)
       newCard = CardClass:new(250, 250, newCow, player)
-      table.insert(deck.cards, newCard)
+--      newCard:setZone(deck)
+--      table.insert(deck.cards, newCard)
+      deck:addCard(newCard)
     elseif cardId == 2 then
       newPegasus = PegasusDataClass:new()
       newCard = CardClass:new(250, 250, newPegasus, player)
-      table.insert(deck.cards, newCard)
+--      newCard:setZone(deck)
+--      table.insert(deck.cards, newCard)
+      deck:addCard(newCard)
     elseif cardId == 3 then
       newMinotaur = MinotaurDataClass:new()
       newCard = CardClass:new(250, 250, newMinotaur, player)
-      table.insert(deck.cards, newCard)
+--      newCard:setZone(deck)
+--      table.insert(deck.cards, newCard)
+      deck:addCard(newCard)
     elseif cardId == 4 then
       newTitan = TitanDataClass:new()
       newCard = CardClass:new(250, 250, newTitan, player)
-      table.insert(deck.cards, newCard)
+--      newCard:setZone(deck)
+--      table.insert(deck.cards, newCard)
+      deck:addCard(newCard)
     elseif cardId == 5 then
       newArtemis = ArtemisDataClass:new()
       newCard = CardClass:new(250, 250, newArtemis, player)
-      table.insert(deck.cards, newCard)
+--      newCard:setZone(deck)
+--      table.insert(deck.cards, newCard)
+      deck:addCard(newCard)
+    elseif cardId == 6 then
+      newAres = AresDataClass:new()
+      newCard = CardClass:new(250, 250, newAres, player)
+      --newCard:setZone(deck)
+      --table.insert(deck.cards, newCard)
+      deck:addCard(newCard)
+    elseif cardId == 7 then
+      newHelios = HeliosDataClass:new()
+      newCard = CardClass:new(250, 250, newHelios, player)
+--      newCard:setZone(deck)
+--      table.insert(deck.cards, newCard)
+      deck:addCard(newCard)
+    elseif cardId == 8 then
+      newDionysus = DionysusDataClass:new()
+      newCard = CardClass:new(250, 250, newDionysus, player)
+--      newCard:setZone(deck)
+--      table.insert(deck.cards, newCard)
+      deck:addCard(newCard)
+    elseif cardId == 9 then
+      newIcarus = IcarusDataClass:new()
+      newCard = CardClass:new(250, 250, newIcarus, player)
+--      newCard:setZone(deck)
+--      table.insert(deck.cards, newCard)
+      deck:addCard(newCard)
+    elseif cardId == 10 then
+      newPandora = PandoraDataClass:new()
+      newCard = CardClass:new(250, 250, newPandora, player)
+--      newCard:setZone(deck)
+--      table.insert(deck.cards, newCard)
+      deck:addCard(newCard)
+    elseif cardId == 11 then
+      newAtlas = AtlasDataClass:new()
+      newCard = CardClass:new(250, 250, newAtlas, player)
+--      newCard:setZone(deck)
+--      table.insert(deck.cards, newCard)
+      deck:addCard(newCard)
+    elseif cardId == 12 then
+      newHercules = HerculesDataClass:new()
+      newCard = CardClass:new(250, 250, newHercules, player)
+--      newCard:setZone(deck)
+--      table.insert(deck.cards, newCard)
+      deck:addCard(newCard)
+    elseif cardId == 13 then
+      newSword = SwordDataClass:new()
+      newCard = CardClass:new(250, 250, newSword, player)
+--      newCard:setZone(deck)
+--      table.insert(deck.cards, newCard)
+      deck:addCard(newCard)
+    elseif cardId == 14 then
+      newHelios = HeliosDataClass:new()
+      newCard = CardClass:new(250, 250, newHelios, player)
+--      newCard:setZone(deck)
+--      table.insert(deck.cards, newCard)
+      deck:addCard(newCard)
     else
       print("error! unknown card id!")
     end
   end
-  print(deck.cards[1])
+  --print(deck.cards[1].name)
   --return deck
 end
 
 function GameManagerClass:revealAllCards()
   for _, loc in ipairs(self.locations) do
     for _, card in ipairs(loc.p1Cards) do
-      card.revealed = true
-      if card.effect ~= nil then --if the card has an effect
-        if card.effect.trigger == TRIGGER_IDS.REVEAL then --and if the card's effect is an "on reveal" effect
-          card.effect:effect()
+      if card.revealed == false then
+        card.revealed = true
+        if card.effect ~= nil then --if the card has an effect
+          if card.effect.trigger == TRIGGER_IDS.REVEAL then --and if the card's effect is an "on reveal" effect
+            --print(card.effect.card)
+            card.effect:effect() --holy shit it's working
+          end
         end
       end
     end
     for _, card in ipairs(loc.p2Cards) do
       card.revealed = true
+    end
+  end
+end
+
+function GameManagerClass:endOfTurn(playerNum)
+  if playerNum == 1 then
+    for _, loc in ipairs(self.locations) do
+      for _, card in ipairs(loc.p1Cards) do
+        if card.effect ~= nil then
+          if card.effect.trigger == TRIGGER_IDS.EOT then
+            card.effect:effect()
+          end
+        end
+      end
+    end
+  else
+    for _, loc in ipairs(self.locations) do
+      for _, card in ipairs(loc.p2Cards) do
+        if card.effect ~= nil then
+          if card.effect.trigger == TRIGGER_IDS.EOT then
+            card.effect:effect()
+          end
+        end
+      end
     end
   end
 end

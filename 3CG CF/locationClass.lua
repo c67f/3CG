@@ -5,6 +5,7 @@ require "playerClass"
 require "vector"
 
 LOCATIONSIZE = Vector(150, 150)
+LOCATION_CAP = 4
 
 function LocationClass:new(x, y, num)
   local location = {}
@@ -51,6 +52,14 @@ function LocationClass:addCard(card)
   end
 end
 
+function LocationClass:removeCard(card)
+  if card.owner.num == 1 then
+    table.remove(self.p1Cards, card.index)
+  else
+    table.remove(self.p2Cards, card.index)
+  end
+end
+
 function LocationClass:getPowerDiff()
   --print("test")
   self.p1Power = 0
@@ -71,6 +80,7 @@ function LocationClass:getPlayerCards(num)
   if num == 1 then
     return self.p1Cards
   else
-    return self.p2cards
+    print("p2 cards")
+    return self.p2Cards --c wasn't capitalized
   end
 end

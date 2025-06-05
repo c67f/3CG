@@ -27,8 +27,12 @@ function CPUPlayerClass:playCard(locations)
   --pick random location:
   math.randomseed(os.time())
   randLocIndex = math.random(#locations)
-  print("random location: " .. randLocIndex)
   randLoc = locations[randLocIndex]
+  while checkIfFull(randLoc, self.playerObj) == true do
+    randLocIndex = math.random(#locations)
+    randLoc = locations[randLocIndex]
+  end
+  print("random location: " .. randLocIndex)
   
   randCard = self:getRandomCard()
   print(randCard.cost)
@@ -56,4 +60,17 @@ function CPUPlayerClass:getRandomCard()
   randIndex = math.random(#self.playerObj.hand)
   randomCard = self.playerObj.hand[randIndex]
   return randomCard
+end
+
+function checkIfFull(location, player)
+  if player.num == 1 then
+    if #location.p1Cards > LOCATION_CAP - 1 then
+      return true
+    end
+  else 
+    if #location.p2Cards > LOCATION_CAP - 1 then
+      return true
+    end
+  end
+  return false
 end

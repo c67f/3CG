@@ -13,11 +13,13 @@ require "CPUPlayerClass"
 
 allCards = {}
 
+TITLE = "Battle of Myths"
+
 function love.load()
   love.window.setTitle("3CG")
   love.graphics.setDefaultFilter("nearest", "nearest")
-  screenWidth = 860
-  screenHeight = 600
+  screenWidth = 1060
+  screenHeight = 800
   love.window.setMode(screenWidth, screenHeight)
   love.graphics.setBackgroundColor(0, 0.8, 0.2)
   
@@ -27,10 +29,10 @@ function love.load()
   --sprites = {cardSpriteTemplate, buttonSpriteTemplate}
   
   --Deck and discard piles
-  deck1 = DeckClass:new()
-  discard1 = DiscardPileClass:new()
-  deck2 = DeckClass:new()
-  discard2 = DiscardPileClass:new()
+  deck1 = DeckClass:new(-200, 250)
+  discard1 = DiscardPileClass:new(0, 0)
+  deck2 = DeckClass:new(1000, 250)
+  discard2 = DiscardPileClass:new(500, 500)
   
   --Create player objects
   player1 = PlayerClass:new(screenWidth, screenHeight, deck1, discard1, 1)
@@ -56,8 +58,8 @@ function love.load()
   cpuPlayer = CPUPlayerClass:new(player2)
   
   --default deck lists:
-  decklist1 = {5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5}
-  decklist2 = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4}
+  decklist1 = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 1, 3, 3, 3, 2, 4, 13, 14, 13, 12, 11, 13, 9, 8, 1, 12, 5}
+  decklist2 = {4, 5, 4, 1, 1, 1, 4, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 9, 3, 3, 3, 4, 2, 1, 4, 4, 1, 2, 1, 1, 8}
   print("size of decklist1 is " .. #decklist1)
   
   --Create gameManager and setup game:
@@ -85,10 +87,26 @@ function love.update()
     --print(card.zone)
     card:update()
   end
+  for _, card in ipairs(deck1.cards) do --forgot to do .cards
+    --print(card.zone.zoneName)
+    card:update()
+  end
+  for _, card in ipairs(deck2.cards) do
+    card:update()
+  end
+  for _, card in ipairs(discard1.cards) do
+    card:update()
+  end
+  for _, card in ipairs(discard2.cards) do
+    card:update()
+  end
   for _, loc in ipairs(locations) do
     --loc:update()
     for _, card in ipairs(loc.p1Cards) do 
       card:update()
+--      if card.name == "Helios" then
+--        print("helios in location")
+--      end
     end
     for _, card in ipairs(loc.p2Cards) do
       card:update()
@@ -111,6 +129,8 @@ function love.draw()
       card:draw()
     end
   end
+  
+  --print(#player1.hand)
   for _, card in ipairs(player1.hand) do
     card:draw()
   end
@@ -118,10 +138,26 @@ function love.draw()
     card:draw()
   end
   
+  for _, card in ipairs(deck1.cards) do
+    card:draw()
+  end
+  for _, card in ipairs(deck2.cards) do
+    card:draw()
+  end
+  for _, card in ipairs(discard1.cards) do
+    card:draw()
+  end
+  for _, card in ipairs(discard2.cards) do
+    card:draw()
+  end
+  
   p1Button:draw()
   
+  love.graphics.print(TITLE, 450, 750, 0, 3)
   love.graphics.print("p1: " .. player1.score, 10, 10)
   love.graphics.print("p2: " .. player2.score, 10, 40)
   love.graphics.print("p1 energy: " .. player1.currMana, 10, 500)
   love.graphics.print("p2 energy: " .. player2.currMana, 700, 30)
+  love.graphics.print("p1 discard pile count: " .. #player1.discardPile, 10, 420)
+  love.graphics.print("p2 discard pile count: " .. #player2.discardPile, 700, 50)
 end

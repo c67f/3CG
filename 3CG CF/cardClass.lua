@@ -27,8 +27,11 @@ function CardClass:new(x, y, data, player) --pow, cost, eff, spriteClass,
   card.name = data.name
   card.power = data.power
   card.cost = data.cost
+  print("new card")
   if data.effect ~= nil then
+    print("dataclass not nil")
     card.effect = data.effect:new(card) --a class which determines the effects of the card (e.g. AthenaEffect, HydraEffect, etc.)
+    print(card.effect.card)
   end
   --if spriteClass ~= nil then
   card.sc = data.spriteClass
@@ -67,7 +70,7 @@ function CardClass:update()--grabberX, grabberY
     self.scale = 0.5 --make smaller to fit
     self.position = Vector(self.zone.position.x + (self.index - 1) * (CARDWIDTH * self.scale + 10) - CARDWIDTH * self.scale, self.zone.position.y + self.flipY*CARDHEIGHT*self.scale)
   elseif self.zoneType == ZONES.GRABBER then --if grabbed, follow the mouse
-    print(love.mouse.getX())
+    --print(love.mouse.getX())
     self.position = Vector(love.mouse.getX(), love.mouse.getY())
   end
 --last thing done 5/23: card auto moves to hand position if in a hand
@@ -83,8 +86,11 @@ function CardClass:draw()
   end
   --love.graphics.draw(sprite, 0, 0)
   love.graphics.draw(sprite, self.position.x, self.position.y, 0, self.scale, self.scale * self.flipY, xOffset, yOffset) --origin offset is the last two parameters
-  love.graphics.print(self.cost .. ", " .. self.power, self.position.x, self.position.y + 75)
-  love.graphics.print(self.owner.num .. "," .. self.index .. ", " .. self.zoneType .. ", " .. self.zone.zoneName .. ", " .. self.zone.position.x .. ", " .. self.position.x, self.position.x, self.position.y - 100)
+  love.graphics.setColor(0, 0, 0.5)
+  love.graphics.print(self.cost .. ", " .. self.power, self.position.x - 10, self.position.y + 15)
+  love.graphics.print(self.name, self.position.x - 45, self.position.y - 85)
+  love.graphics.setColor(1, 1, 1)
+  --love.graphics.print(self.owner.num .. "," .. self.index .. ", " .. self.zoneType .. ", " .. self.zone.zoneName .. ", " .. self.zone.position.x .. ", " .. self.position.x, self.position.x, self.position.y - 100)
 end
 
 

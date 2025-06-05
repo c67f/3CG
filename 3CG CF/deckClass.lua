@@ -1,15 +1,27 @@
 DeckClass = {}
-function DeckClass:new()
-  local deck = {}
+function DeckClass:new(x, y)
+  local deckClass = {}
   local metadata = {__index = DeckClass}
-  setmetatable(deck, metadata)
+  setmetatable(deckClass, metadata)
   
-  deck.cards = {}
+  deckClass.position = Vector(x, y)
+  deckClass.cards = {}
+  deckClass.zoneType = ZONES.DECK
+  deckClass.zoneName = "Deck"
   
   
-  return deck
+  return deckClass
 end
 
---function DeckClass:push()
-  --self.cards
---end
+function DeckClass:addCard(card)
+  prevZone = card.zone
+  prevIndex = card.index
+  card:setZone(self)
+  card.zoneType = self.zoneType
+  table.insert(self.cards, card)
+  if prevZone ~= nil then
+    table.remove(prevZone, card.index)
+  end
+  card.index = #self.cards
+  
+end

@@ -45,6 +45,9 @@ function GrabberClass:update(cards, hands, locations)
     if releaseZone ~= nil then
       print("releaseZone type: " .. releaseZone.zoneType)
       
+      if releaseZone.zoneType == ZONES.LOCATION then
+        self.grabbedCard.owner.currMana = self.grabbedCard.owner.currMana - self.grabbedCard.cost --subtract cost from current energy - technically this also will charge you if you picked up from a location and dropped on a location, but currently you can't so it's fine
+      end
       self:release(releaseZone, self.grabbedCard)
       
       --print("zone type: " .. self.grabbdCard.zoneType)
@@ -78,9 +81,10 @@ function GrabberClass:releaseCheck(hands, locations, cardOwner)
     end
   end
   for _, location in ipairs(locations) do --check all 3 locations if the grabbed card is overlapping
-    if detectOverlap(cardSize, LOCATIONSIZE, self.currentMousePos, location.position) then
+    if detectOverlap(cardSize, LOCATIONSIZE, self.currentMousePos, location.position) and cardOwner.currMana >= self.grabbedCard.cost and checkIfFull(location, cardOwner) == false then
       print("dropping on a location")
       --print(location.zoneType)
+      
       return location--ZONES.LOCATION
     end
   end
@@ -90,10 +94,14 @@ end
 function GrabberClass:release(zone, card)
   if self.grabbedSource.zoneType == ZONES.HAND then --5/27: locations are now drawn and a bug was fixed with them not being created, picking up from a hand works, as does the cards snapping back when released over an invalid spot. Last thing changed was this line, to grabbedSource insted of zone, since I realized that it currently doesn't matter what the type of the zone your dropping the card onto is (since the function, addCard, is the same), but it does matter what the type of the zone you're removing them from (since players use .hand as their card table while locations don't). Next thing: getting some bugs with dropping cards onto locations - they disappear, , and after dragging and dropping a couple there's a crash/error. Also need to finish coding PlayerClass to update its cards position in the hand.
     --5/28 1:51: fixed the crashing bug by having cards automatically update their zoneType to be their zone's type - I was setting the zone in player (and location) but not the zoneType, this makes that a nonissue
+    
     table.remove(self.grabbedSource.hand, card.index) --remove card from the cards table of the object that it was grabbed from
     zone:addCard(card)
     print(card.zone.zoneType)
     self.grabbedCard = nil
+    
+
+    
     --print(card.position.x .. ", " .. card.position.y)
   elseif self.grabbedSource.zoneType == ZONES.LOCATION then
     --TODO: Add an additional check to what player the cards are from, and remove from the appropriate players table, since there isn't actually a general "cards" table in locations.
@@ -127,4 +135,18 @@ function detectOverlap(size1, size2, position1, position2) --size 1 and 2 are th
   else
     return false
   end
+end
+
+function checkIfFull(location, player)
+  print(LOCATION_CAP)
+  if player.num == 1 then
+    if #location.p1Cards > LOCATION_CAP - 1 then
+      return true
+    end
+  else 
+    if #location.p2Cards > LOCATION_CAP - 1 then
+      return true
+    end
+  end
+  return false
 end

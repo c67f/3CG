@@ -62,10 +62,115 @@ end
 ArtemisDataClass = CardDataClass:new()
 function ArtemisDataClass:new()
   self.name = "Artemis"
-  self.cost = 3
+  self.cost = 4
   self.power = 4
   --self.spriteClass = 
-  self.effect = ArtemisEffectClass:new(self)
+  self.effect = ArtemisEffectClass:new()
   
   return self
 end
+
+AresDataClass = CardDataClass:new()  --6/4 last thing done: created ares card data and effect
+function AresDataClass:new()
+  self.name = "Ares"
+  self.cost = 4
+  self.power = 2
+  --self.spriteClass = 
+  self.effect = AresEffectClass:new()
+  
+  return self
+end
+
+HeliosDataClass = CardDataClass:new()
+function HeliosDataClass:new()
+  self.name = "Helios"
+  self.cost = 4
+  self.power = 10
+  --self.spriteClass =
+  self.effect = HeliosEffectClass:new()
+  
+  return self
+end
+
+DionysusDataClass = CardDataClass:new()
+function DionysusDataClass:new()
+  self.name = "Dionysus"
+  self.cost = 5
+  self.power = 7
+  --self.spriteClass =
+  self.effect = DionysusEffectClass:new()
+
+  return self
+end
+
+IcarusDataClass = CardDataClass:new()
+function IcarusDataClass:new()
+  self.name = "Icarus"
+  self.cost = 2
+  self.power = 0
+  --self.spriteClass =
+  self.effect = IcarusEffectClass:new()
+
+  return self
+end
+
+PandoraDataClass = CardDataClass:new()
+function PandoraDataClass:new()
+  self.name = "Pandora"
+  self.cost = 3
+  self.power = 6
+  --self.spriteClass =
+  self.effect = PandoraEffectClass:new()
+
+  return self
+end
+
+AtlasDataClass = CardDataClass:new()
+function AtlasDataClass:new()
+  self.name = "Atlas"
+  self.cost = 4
+  self.power = 8
+  --self.spriteClass =
+  self.effect = AtlasEffectClass:new()
+
+  return self
+end
+
+HerculesDataClass = CardDataClass:new()
+function HerculesDataClass:new()
+  self.name = "Hercules"
+  self.cost = 4
+  self.power = 6
+  --self.spriteClass =
+  self.effect = HerculesEffectClass:new()
+
+  return self
+end
+
+SwordDataClass = CardDataClass:new()
+function SwordDataClass:new()
+  self.name = "Sword of Damocles"
+  self.cost = 5
+  self.power = 10
+  --self.spriteClass =
+  self.effect = SwordEffectClass:new()
+
+  return self
+end
+
+--NyxDataClass = CardDataClass:new()
+
+--eventually: Persephone
+--and
+--Hades
+
+--Template:
+--function DataClass:new()
+--  self.name = ""
+--  self.cost =
+--  self.power = 
+--  --self.spriteClass =
+--  self.effect = EffectClass:new()
+--
+--  return self
+--end

@@ -52,6 +52,10 @@ function PlayerClass:addCard(card)
   card.index = #self.hand
 end
 
+function PlayerClass:removeCard(card)
+  table.remove(self.hand, card.index)
+end
+
 function PlayerClass:drawCard(deckCards) --probably should change this to use self.deck, but want to figure out this problem first
   --deck.cards = cards
   --print(deckCards)
@@ -66,5 +70,5 @@ function PlayerClass:drawCard(deckCards) --probably should change this to use se
   newCard.zoneType = ZONES.HAND --Note: Need to make sure to set the zone type whenever I move a card to a different type of zone
   print(newCard.zoneType)
   newCard.index = #self.hand --gotta make sure to update the index of a card whenever it moves zones (at least to a location or hand zone, anyway)
-  print(newCard.zone)
+  print(newCard.zone.zoneName)
 end
