@@ -47,7 +47,7 @@ end
 
 function PlayerClass:addCard(card)
   card.zone = self
-  print(card.zoneType)
+  --print(card.zoneType)
   table.insert(self.hand, card)
   card.index = #self.hand
 end
@@ -61,14 +61,14 @@ function PlayerClass:drawCard(deckCards) --probably should change this to use se
   --print(deckCards)
   --print(#deckCards)
   table.insert(self.hand, deckCards[#deckCards]) --top card of deck is last card in table
-  print("new card added: " .. self.hand[#self.hand].power)
+  --print("new card added: " .. self.hand[#self.hand].power)
   table.remove(deckCards, #deckCards)
-  print("new card added after card removed from deck is hopefully still the same: " .. self.hand[#self.hand].power)
+  --print("new card added after card removed from deck is hopefully still the same: " .. self.hand[#self.hand].power)
   
   newCard = self.hand[#self.hand]
   newCard.zone = self-- = HAND1 --why can't I do newCard:setZone(self)?
   newCard.zoneType = ZONES.HAND --Note: Need to make sure to set the zone type whenever I move a card to a different type of zone
-  print(newCard.zoneType)
+  --print(newCard.zoneType)
   newCard.index = #self.hand --gotta make sure to update the index of a card whenever it moves zones (at least to a location or hand zone, anyway)
-  print(newCard.zone.zoneName)
+  --print(newCard.zone.zoneName)
 end

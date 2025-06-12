@@ -28,3 +28,13 @@ function SpriteClassButton:new()
   }
   return self
 end
+
+SpriteClassArtemis = SpriteClass:new()
+
+function SpriteClassArtemis:new()
+  self.sprites = {
+    love.graphics.newImage("Images/ArtemisCard.png"),
+    love.graphics.newImage("Images/CardBack.png")
+  }
+  return self
+end

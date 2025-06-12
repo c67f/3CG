@@ -24,10 +24,22 @@ function CPUPlayerClass:playCard(locations)
     print("no cards in cpu player's hand")
     return
   end
+  
+  
+  --1: Check that there’s an open location
+--  allFull = true
+--  for _, loc in ipairs(locations) do
+--    if checkIfFull ~= true then
+--      allFull = false
+--    end
+--  end
+  --if allFull == false then
+  
   --pick random location:
   math.randomseed(os.time())
   randLocIndex = math.random(#locations)
   randLoc = locations[randLocIndex]
+  
   while checkIfFull(randLoc, self.playerObj) == true do
     randLocIndex = math.random(#locations)
     randLoc = locations[randLocIndex]
@@ -48,10 +60,11 @@ function CPUPlayerClass:playCard(locations)
   if searchCount < #self.playerObj.hand then --if a playable card was found
     table.remove(self.playerObj.hand, randCard.index)
     randLoc:addCard(randCard)
-    print("played card with power " .. randCard.power .. " to location #" .. randLocIndex)
+    print("played " .. randCard.name .. " to location #" .. randLocIndex)
   else
     print("no card to play")
   end
+  --end
   
 end
 

@@ -64,7 +64,7 @@ function ArtemisDataClass:new()
   self.name = "Artemis"
   self.cost = 4
   self.power = 4
-  --self.spriteClass = 
+  self.spriteClass = SpriteClassArtemis:new()
   self.effect = ArtemisEffectClass:new()
   
   return self
@@ -158,9 +158,27 @@ function SwordDataClass:new()
   return self
 end
 
---NyxDataClass = CardDataClass:new()
+NyxDataClass = CardDataClass:new()
+function NyxDataClass:new()
+  self.name = "Nyx"
+  self.cost = 6
+  self.power = 13
+  --self.spriteClass =
+  self.effect = NyxEffectClass:new()
 
---eventually: Persephone
+  return self
+end
+
+PersephoneDataClass = CardDataClass:new()
+function PersephoneDataClass:new()
+  self.name = "Persephone"
+  self.cost = 3
+  self.power = 7
+  --self.spriteClass =
+  self.effect = PersephoneEffectClass:new()
+  
+  return self
+end
 --and
 --Hades
 

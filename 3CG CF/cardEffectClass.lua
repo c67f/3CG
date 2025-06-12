@@ -209,6 +209,7 @@ function HerculesEffectClass:effect()
   end
 end
 
+--Sword of Damocles: at end of turn, lose 1 power if not winning the location it's at
 SwordEffectClass = CardEffectClass:new()
 function SwordEffectClass:new(c)
   local swordEffect = {}
@@ -239,6 +240,78 @@ function SwordEffectClass:effect()
   end
 end
 
+NyxEffectClass = CardEffectClass:new()
+function NyxEffectClass:new(c)
+  local nyxEffect = {}
+  local metadata = {__index = NyxEffectClass}
+  setmetatable(nyxEffect, metadata)
+
+  nyxEffect.name = "Nyx"
+  nyxEffect.trigger = TRIGGER_IDS.REVEAL
+  nyxEffect.card = c
+
+  return nyxEffect
+end
+
+function NyxEffectClass:effect() --6/9/2025: Last change was adding Nyx card and effect. Seems to work (despite weirdness, or lack thereof, noted below) but in testing discovered that there seems to be a bug where the CPU starts playing cards to player 1's side of the locations or something - probably unrelated to Nyx, but maybe not?
+  cards = self.card.zone:getPlayerCards(self.card.owner.num) --wait hang on why does this not get the card itself? Edit: Ok I think it does - Nyx gets discarded if they're the only one there - but I didn't notice because if there's a card besides Nyx it works fine.
+  selfIndex = self.card.index
+  if cardCount(cards) > 1 then -- if there are no other cards by the same player at this location, do nothing, otherwise do this
+    print("Nyx effect")
+    --print(#cards)
+    self.card.zone:printPlayerCards(self.card.owner.num)
+    discardPile = self.card.owner.discardPile
+    powerIncrease = 0
+    
+    
+    --remove every card before Nyx
+    for _ = 1, selfIndex-1 do --, card ipairs()--ahhh I see. The weirdness with what cards are discarded I think is because the amount of cards in cards changes every time this loop runs (since a card is discarded), so that messes up the index of the loop - e.g. the old index 3 becomes the new index 2
+      print("_ = " .. _)
+      print(cards[1].name) --6/10: bug: discarding 2nd card instead of 1st on the second loop?
+      print(cards[2].name)
+      --if cards[_] ~= self.card then
+      powerIncrease = powerIncrease + cards[1].power
+      print("Nyx is discarding " .. cards[1].name)
+      discardPile:addCard(cards[1])
+      self.card.zone:printPlayerCards(self.card.owner.num)
+      --print("#cards is " .. #cards)
+      --_ = _ - 1
+      --end
+      --print("Nyx effect part 2")
+    end
+    --remove every card after Nyx
+    if #cards > 1 then
+      for _ = 2, #cards do
+        powerIncrease = powerIncrease + cards[2].power
+        print("Nyx is discarding " .. cards[2].name)
+        discardPile:addCard(cards[2])
+      end
+    end
+    self.card.power = self.card.power + powerIncrease
+  end
+end
+
+PersephoneEffectClass = CardEffectClass:new()
+
+function PersephoneEffectClass:new(c)
+  local persephoneEffect = {}
+  local metadata = {__index = PersephoneEffectClass}
+  setmetatable(persephoneEffect, metadata)
+
+  persephoneEffect.name = "Persephone"
+  persephoneEffect.trigger = TRIGGER_IDS.REVEAL
+  persephoneEffect.card = c
+
+  return persephoneEffect
+end
+
+function PersephoneEffectClass:effect()
+  playerHand = self.card.owner.hand
+  discardPile = self.card.owner.discardPile
+  lowestIndex = getLowestPower(playerHand)
+  
+  discardPile:addCard(playerHand[lowestIndex])
+end
 
 --EffectClass template:
 --function EffectClass:new(c)
@@ -270,4 +343,16 @@ function cardCount(cards)
     cardsNum = 0
   end
   return cardsNum
+end
+
+function getLowestPower(cards)
+  lowestPower = nil
+  lowestIndex = 0
+  for _, card in ipairs(cards) do
+    if lowestPower == nil or card.power < lowestPower then --order here is important - if the nil check isn't first it tries to compare a nil, with it first it goes straight into the if statement without comparing it (I think)
+      lowestIndex = _
+      lowestPower = card.power
+    end
+  end
+  return lowestIndex
 end

@@ -3,7 +3,7 @@ ButtonClass = {}
 require "vector"
 require "gameManagerClass"
 
-BUTTON_SIZE = Vector(220/2, 100/2) --base image is too big
+BUTTON_SIZE = Vector(220, 100) --base image is too big
 
 function ButtonClass:new(x, y, spriteClass)
   local button = {}
@@ -11,7 +11,7 @@ function ButtonClass:new(x, y, spriteClass)
   setmetatable(button, metadata)
   
   button.position = Vector(x, y)
-  button.scale = 0.5
+  button.scale = 1
   if spriteClass ~= nil then
     button.sc = spriteClass
   else
@@ -29,6 +29,7 @@ function TurnButtonClass:new(x, y, spriteClass)
   local metadata = {__index = TurnButtonClass}
   setmetatable(turnButton, metadata)
   
+  turnButton.scale = 0.5
   turnButton.position.x = x
   turnButton.position.y = y
   turnButton.sc = spriteClass
@@ -41,10 +42,11 @@ function TurnButtonClass:test()
 end
 
 function TurnButtonClass:draw()
-  xOffset = BUTTON_SIZE.x/2
-  yOffset = BUTTON_SIZE.y/2
+  xOffset = (BUTTON_SIZE.x*self.scale)/2 --6/11 7:09: fixed Nyx bug with dad, made start button and title screen functionality. However, there's a bug where the overlap check for a scaled button isn't correct, although for this button, not halving (BUTTON_SIZE.x*self.scale)/2 makes the overlap check correct - why?
+  yOffset = (BUTTON_SIZE.y*self.scale)/2
   sprite = self.sc:getSprite(1)
   love.graphics.draw(sprite, self.position.x, self.position.y, 0, self.scale, self.scale, xOffset, yOffset)
+  love.graphics.setFont(mainFont)
   love.graphics.print("End Turn", self.position.x, self.position.y, 0, self.scale, self.scale)
 end
 
@@ -55,7 +57,7 @@ function TurnButtonClass:update(gameManager)
     --print(self.pressed)
   end
   mousePos = Vector(love.mouse.getX(), love.mouse.getY())
-  if detectOverlap(BUTTON_SIZE, Vector(0,0), mousePos, self.position) and love.mouse.isDown(1) and self.pressed == false and gameManager.currentPhase == TURN_PHASE[1] and gameManager.currentPlayer == 1 then --This will need to be changed if multiplayer becomes a thing - best bet might be a combination of the currentPhase check at the start of update combined with a timer
+  if detectOverlap((BUTTON_SIZE*self.scale), Vector(0,0), mousePos, self.position) and love.mouse.isDown(1) and self.pressed == false and gameManager.currentPhase == TURN_PHASE[1] and gameManager.currentPlayer == 1 then --This will need to be changed if multiplayer becomes a thing - best bet might be a combination of the currentPhase check at the start of update combined with a timer
     self.pressed = true --so that the button doesn't get pressed every frame the mouse is down
     self:press(gameManager)
   end
@@ -63,6 +65,44 @@ end
 
 function TurnButtonClass:press(gameManager)
   gameManager:submitCards()
+end
+
+
+StartButtonClass = ButtonClass:new()
+function StartButtonClass:new(x, y, spriteClass)
+  local startButton = {}
+  local metadata = {__index = StartButtonClass}
+  setmetatable(startButton, metadata)
+  
+  startButton.scale = 1
+  startButton.position.x = x
+  startButton.position.y = y
+  startButton.sc = spriteClass
+  
+  return startButton
+end
+
+function StartButtonClass:draw()
+  xOffset = (BUTTON_SIZE.x*self.scale)/2
+  yOffset = (BUTTON_SIZE.y*self.scale)/2
+  sprite = self.sc:getSprite(1)
+  love.graphics.draw(sprite, self.position.x, self.position.y, 0, self.scale, self.scale, xOffset, yOffset)
+  love.graphics.setFont(mainFont)
+  love.graphics.print("Start Game", self.position.x, self.position.y, 0, 1, 1, xOffset, yOffset) --why isn't offset needed?
+end
+
+function StartButtonClass:update()
+  if love.mouse.isDown(1) ~= true then
+    self.pressed = false
+  end
+  mousePos = Vector(love.mouse.getX(), love.mouse.getY())
+  if detectOverlap((BUTTON_SIZE*self.scale), Vector(0,0), mousePos, self.position) and love.mouse.isDown(1) and self.pressed == false then
+    self.pressed = true
+    self:press()
+  end
+end
+function StartButtonClass:press()
+  gameStarted = true
 end
 
 function detectOverlap(size1, size2, position1, position2) --size 1 and 2 are thesizes of the two checked objects as vectors, and positions 1 and 2 are their positions

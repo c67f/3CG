@@ -29,8 +29,9 @@ end
 function LocationClass:draw()
   --print("drawing location")
   offset = Vector(LOCATIONSIZE.x/2, LOCATIONSIZE.y/2)
-  love.graphics.setColor(1, 1, 0.9)
+  love.graphics.setColor(1, 1, 0.8)
   love.graphics.rectangle("fill", self.position.x - offset.x, self.position.y - offset.y, LOCATIONSIZE.x, LOCATIONSIZE.y)
+  love.graphics.setColor(1, 1, 1)
 end
 
 function LocationClass:addCard(card)
@@ -80,7 +81,16 @@ function LocationClass:getPlayerCards(num)
   if num == 1 then
     return self.p1Cards
   else
-    print("p2 cards")
+    --print("p2 cards")
     return self.p2Cards --c wasn't capitalized
+  end
+end
+
+function LocationClass:printPlayerCards(num)
+  cards = self:getPlayerCards(num)
+  print("Cards at " .. self.num)
+  for _, card in ipairs(cards) do
+    print(card.name .. "index: " .. card.index)
+    print("actual index: " .. _)
   end
 end

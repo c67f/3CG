@@ -14,7 +14,7 @@ TURN_PHASE = { --currently doing phases separate from player turn, but could ins
 
 HAND_SIZE = 7
 
-WIN_THRESHOLD = 50
+WIN_THRESHOLD = 500
 
 function GameManagerClass:new(player1, player2, locTable) --, spriteTable
   local gameManager = {}
@@ -77,14 +77,14 @@ end
 function GameManagerClass:startTurn() --5/31: next thing is mana system and resetting mana on turn start, might need to refactor turn system?
   if self.currentPlayer == 1 then
     if #self.p1.hand < HAND_SIZE then
-      print("drawing card to p1")
-      print(#self.p1.deck)
+      --print("drawing card to p1")
+      --print(#self.p1.deck)
       self.p1:drawCard(self.p1.deck.cards) --forgot .cards again
     end
     self.p1.currMana = self.currentRound
   else 
     if #self.p2.hand < HAND_SIZE then
-      self.p2:drawCard(self.p1.deck.cards)
+      self.p2:drawCard(self.p2.deck.cards) --ah ha! p2 was drawing from p1's deck
     end
     self.p2.currMana = self.currentRound
   end
@@ -248,8 +248,14 @@ function GameManagerClass:readDeck(deckList, deck, player)
 --      table.insert(deck.cards, newCard)
       deck:addCard(newCard)
     elseif cardId == 14 then
-      newHelios = HeliosDataClass:new()
-      newCard = CardClass:new(250, 250, newHelios, player)
+      newNyx = NyxDataClass:new()
+      newCard = CardClass:new(250, 250, newNyx, player)
+--      newCard:setZone(deck)
+--      table.insert(deck.cards, newCard)
+      deck:addCard(newCard)
+    elseif cardId == 15 then
+      newPersephone = PersephoneDataClass:new()
+      newCard = CardClass:new(250, 250, newPersephone, player)
 --      newCard:setZone(deck)
 --      table.insert(deck.cards, newCard)
       deck:addCard(newCard)
