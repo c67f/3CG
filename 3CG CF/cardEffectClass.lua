@@ -39,8 +39,8 @@ function ArtemisEffectClass:effect()
     otherPlayerCardsNum = cardCount(otherPlayerCards)
       
     if otherPlayerCardsNum < 2 then
-      print("other player's cards " .. otherPlayerCardsNum)--#self.card.zone:getPlayerCards(otherPlayer(self.card.owner.num)))
-      print(#self.card.zone.p2Cards)
+      --print("other player's cards " .. otherPlayerCardsNum)--#self.card.zone:getPlayerCards(otherPlayer(self.card.owner.num)))
+      --print(#self.card.zone.p2Cards)
       self.card.power = self.card.power + 5
     end
   end
@@ -87,9 +87,9 @@ end
 function HeliosEffectClass:effect()
   if self.card.zoneType == ZONES.LOCATION and self.time == 0 then
     self.time = 1
-    print("next turn helios is discarded") --6/3 4:11: last thing done is make it so Helios isn't discarded before he can be revealed, also before that got discard piles working and not being able to play cards with a higher cost than the player's mana/energy for player 1
+    --print("next turn helios is discarded") --6/3 4:11: last thing done is make it so Helios isn't discarded before he can be revealed, also before that got discard piles working and not being able to play cards with a higher cost than the player's mana/energy for player 1
   elseif self.card.zoneType == ZONES.LOCATION and self.time == 1 then
-    print("helios effect")
+    --print("helios effect")
     self.card.owner.discardPile:addCard(self.card)
   end
 end
@@ -110,12 +110,13 @@ end
 
 function DionysusEffectClass:effect()
   if self.card.zoneType == ZONES.LOCATION then
-    print("other cards: " .. #self.card.zone:getPlayerCards(self.card.owner.num))
+    --print("other cards: " .. #self.card.zone:getPlayerCards(self.card.owner.num))
     otherCardsNum = #self.card.zone:getPlayerCards(self.card.owner.num) - 1
     self.card.power = self.card.power + 2*otherCardsNum
   end
 end
 
+--Icarus: End of Turn, if on field: increase power by 1. Then, destroy self if power is greater than 6
 IcarusEffectClass = CardEffectClass:new()
 function IcarusEffectClass:new(c)
   local IcarusEffect = {}
@@ -138,6 +139,7 @@ function IcarusEffectClass:effect()
   end
 end
 
+--Pandora: On Reveal: if no other allied cards are at the same location, lower power by 5
 PandoraEffectClass = CardEffectClass:new()
 function PandoraEffectClass:new(c)
   local pandoraEffect = {}
@@ -160,6 +162,7 @@ function PandoraEffectClass:effect()
   end
 end
 
+--Atlas: End of Turn: if your side of this location is full (4 cards), lower own power by 1
 AtlasEffectClass = CardEffectClass:new()
 function AtlasEffectClass:new(c)
   local atlasEffect = {}
@@ -181,6 +184,7 @@ function AtlasEffectClass:effect()
   end
 end
 
+--Hercules: On Reveal: if this card has the greatest power at this location, double own power
 HerculesEffectClass = CardEffectClass:new()
 function HerculesEffectClass:new(c)
   local herculesEffect = {}
@@ -197,8 +201,14 @@ end
 function HerculesEffectClass:effect()
   if self.card.zoneType == ZONES.LOCATION then
     otherCards = self.card.zone:getPlayerCards(self.card.owner.num)
+    otherPlayerCards = self.card.zone:getPlayerCards(otherPlayer(self.card.owner.num))
     strongest = true
     for _, card in ipairs(otherCards) do
+      if card.power > self.card.power then
+        strongest = false
+      end
+    end
+    for _, card in ipairs(otherPlayerCards) do
       if card.power > self.card.power then
         strongest = false
       end
@@ -224,22 +234,23 @@ function SwordEffectClass:new(c)
 end
 
 function SwordEffectClass:effect()
-  print("swordEffect")
+  --print("swordEffect")
   if self.card.zoneType == ZONES.LOCATION then
     if self.card.owner.num == 1 then
-      print("power diff is " .. self.card.zone:getPowerDiff())
+      --print("power diff is " .. self.card.zone:getPowerDiff())
       if self.card.zone:getPowerDiff() <= 0 then
         self.card.power = self.card.power - 1
       end
     else
       if self.card.zone:getPowerDiff() >= 0 then
-        print("power diff is " .. self.card.zone:getPowerDiff())
+        --print("power diff is " .. self.card.zone:getPowerDiff())
         self.card.power = self.card.power - 1
       end
     end
   end
 end
 
+--Nyx: On Reveal: destroy all other allied cards at this location and add their power to self
 NyxEffectClass = CardEffectClass:new()
 function NyxEffectClass:new(c)
   local nyxEffect = {}
@@ -257,7 +268,7 @@ function NyxEffectClass:effect() --6/9/2025: Last change was adding Nyx card and
   cards = self.card.zone:getPlayerCards(self.card.owner.num) --wait hang on why does this not get the card itself? Edit: Ok I think it does - Nyx gets discarded if they're the only one there - but I didn't notice because if there's a card besides Nyx it works fine.
   selfIndex = self.card.index
   if cardCount(cards) > 1 then -- if there are no other cards by the same player at this location, do nothing, otherwise do this
-    print("Nyx effect")
+    --print("Nyx effect")
     --print(#cards)
     self.card.zone:printPlayerCards(self.card.owner.num)
     discardPile = self.card.owner.discardPile
@@ -266,12 +277,12 @@ function NyxEffectClass:effect() --6/9/2025: Last change was adding Nyx card and
     
     --remove every card before Nyx
     for _ = 1, selfIndex-1 do --, card ipairs()--ahhh I see. The weirdness with what cards are discarded I think is because the amount of cards in cards changes every time this loop runs (since a card is discarded), so that messes up the index of the loop - e.g. the old index 3 becomes the new index 2
-      print("_ = " .. _)
-      print(cards[1].name) --6/10: bug: discarding 2nd card instead of 1st on the second loop?
-      print(cards[2].name)
+     -- print("_ = " .. _)
+      --print(cards[1].name) --6/10: bug: discarding 2nd card instead of 1st on the second loop?
+      --print(cards[2].name)
       --if cards[_] ~= self.card then
       powerIncrease = powerIncrease + cards[1].power
-      print("Nyx is discarding " .. cards[1].name)
+      --print("Nyx is discarding " .. cards[1].name)
       discardPile:addCard(cards[1])
       self.card.zone:printPlayerCards(self.card.owner.num)
       --print("#cards is " .. #cards)
@@ -283,7 +294,7 @@ function NyxEffectClass:effect() --6/9/2025: Last change was adding Nyx card and
     if #cards > 1 then
       for _ = 2, #cards do
         powerIncrease = powerIncrease + cards[2].power
-        print("Nyx is discarding " .. cards[2].name)
+        --print("Nyx is discarding " .. cards[2].name)
         discardPile:addCard(cards[2])
       end
     end
@@ -291,8 +302,8 @@ function NyxEffectClass:effect() --6/9/2025: Last change was adding Nyx card and
   end
 end
 
+--Persephone: On Reveal: the lowest power card from your hand is discarded
 PersephoneEffectClass = CardEffectClass:new()
-
 function PersephoneEffectClass:new(c)
   local persephoneEffect = {}
   local metadata = {__index = PersephoneEffectClass}

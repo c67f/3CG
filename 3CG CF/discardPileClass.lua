@@ -13,7 +13,7 @@ function DiscardPileClass:new(x, y)
 end
 
 function DiscardPileClass:addCard(card)
-  print(card.name)
+  --print(card.name)
   prevZone = card.zone
   prevIndex = card.index
   card:setZone(self)
@@ -29,7 +29,7 @@ function DiscardPileClass:addCard(card)
   elseif prevZone.zoneType == ZONES.HAND then
     adjustCards(prevZone.hand, prevIndex)
   else
-    print("prevZone name: " .. prevZone.zoneName)
+    --print("prevZone name: " .. prevZone.zoneName)
     adjustCards(prevZone.cards, prevIndex)
   end
   

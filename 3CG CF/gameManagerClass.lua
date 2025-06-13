@@ -14,7 +14,7 @@ TURN_PHASE = { --currently doing phases separate from player turn, but could ins
 
 HAND_SIZE = 7
 
-WIN_THRESHOLD = 900
+WIN_THRESHOLD = 170
 
 function GameManagerClass:new(player1, player2, locTable) --, spriteTable
   local gameManager = {}
@@ -40,10 +40,10 @@ function GameManagerClass:setupGame(decklist1, decklist2)
   
   deck1 = self.p1.deck
   deck2 = self.p2.deck
-  print(decklist1)
+  --print(decklist1)
   self:readDeck(decklist1, deck1, self.p1)--deck1 = 
   self:readDeck(decklist2, deck2, self.p2)--deck2 = 
-  print(deck1.cards[1])
+  --print(deck1.cards[1])
   
   cardDataBase = CardDataClass:new()
   
@@ -113,12 +113,12 @@ function GameManagerClass:submitCards()
       if loc:getPowerDiff() > 0 then
         winners[_] = 1
         scores[_] = loc:getPowerDiff()
-        print("player 1 scores " .. scores[_] .. " point at location " .. loc.num)
+        --print("player 1 scores " .. scores[_] .. " point at location " .. loc.num)
         self.p1.score = self.p1.score + scores[_] --this is kinda redundant but I'm keeping the separate scores variables for now just in case I want to use them later
       elseif loc:getPowerDiff() < 0 then
         winners[_] = 2
         scores[_] = loc:getPowerDiff() * -1 --diff is negative if player 2 wins
-        print("player 2 scores " .. scores[_] .. " point at location " .. loc.num)
+        --print("player 2 scores " .. scores[_] .. " point at location " .. loc.num)
         self.p2.score = self.p2.score + scores[_]
       else
         winners[_] = 0
@@ -145,7 +145,6 @@ function GameManagerClass:submitCards()
 end
 
 function GameManagerClass:endGame()
-  print("the winner is player " .. self.winner.num .. "!")
 end
 
 function GameManagerClass:nextTurn()
@@ -157,7 +156,7 @@ function GameManagerClass:nextTurn()
     self:submitCards() --submits cards, then goes to next turn, which will be player 1's turn
   else
     self.currentRound = self.currentRound + 1 --only increment the round at the end of player 2's turn
-    print("player 1's turn")
+    --print("player 1's turn")
     self.currentTurn = self.currentRound + 1 --increment current round after both players have gone
     self.currentPlayer = 1
     self:startTurn()
@@ -260,7 +259,7 @@ function GameManagerClass:readDeck(deckList, deck, player)
 --      table.insert(deck.cards, newCard)
       deck:addCard(newCard)
     else
-      print("error! unknown card id!")
+      --print("error! unknown card id!")
     end
   end
   --print(deck.cards[1].name)

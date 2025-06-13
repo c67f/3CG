@@ -6,6 +6,7 @@ require "vector"
 require "locationClass"
 require "playerClass"
 
+MOUSEOVER_SIZE = Vector(130, 150)
 
 function GrabberClass:new()
   local grabber = {}
@@ -13,28 +14,38 @@ function GrabberClass:new()
   setmetatable(grabber, metadata)
   
   grabber.position = Vector(0, 0) --currently placeholder, just here so "zone.position" for cards works
-  grabber.currentMousePos = nil
+  grabber.currentMousePos = Vector(0, 0)
   grabber.grabbedCard = nil --what card is being grabbed (if any)
   grabber.grabbedSource = nil --where the card was grabbed from
   grabber.test = "test"
   grabber.zoneType = ZONES.GRABBER
   grabber.zoneName = "Grabber"
-  
+  grabber.mouseOver = false
+  grabber.mousedOverCard = nil
   
   return grabber
 end
 
 function GrabberClass:update(cards, hands, locations)
+  --print(self.mouseOver)
   --print("grabber update")
   self.currentMousePos = Vector(love.mouse.getX(), love.mouse.getY())
-  mouseSize = Vector(0,0) --zero vector for the detectOverlap function
+  mouseSize = Vector(0, 0) --zero vector for the detectOverlap function
   cardSize = Vector(CARDWIDTH, CARDHEIGHT)
+  --print(CARDWIDTH)
+  --print(CARDHEIGHT)
   
+  self.mouseOver = false
+  self.mousedOverCard = nil
   for _, card in ipairs(cards) do
-    if detectOverlap(mouseSize, cardSize, self.currentMousePos, card.position) then --might want to add a "layer" parameter to cards to deal with what card should be picked up in overlapping cards? But I'm not sure if there will actually be any situations where cards will overlap
-      --print("mousing over a card")
+    if self:detectOverlap(mouseSize, cardSize, self.currentMousePos, card.position) then --might want to add a "layer" parameter to cards to deal with what card should be picked up in overlapping cards? But I'm not sure if there will actually be any situations where cards will overlap
+      --print("mousing over a card")for _, card in ipairs(cards) do
+      if love.mouse.isDown(1) == false and self.grabbedCard == nil then
+        self.mouseOver = true
+        self.mousedOverCard = card
+      end
       if love.mouse.isDown(1) and self.grabbedCard == nil then
-        print("grabbing card")
+        --print("grabbing card")
         self:grab(card)
       end
     end
@@ -43,7 +54,7 @@ function GrabberClass:update(cards, hands, locations)
   if not love.mouse.isDown(1) and self.grabbedCard ~= nil then
     releaseZone = self:releaseCheck(hands, locations, self.grabbedCard.owner)
     if releaseZone ~= nil then
-      print("releaseZone type: " .. releaseZone.zoneType)
+      --print("releaseZone type: " .. releaseZone.zoneType)
       
       if releaseZone.zoneType == ZONES.LOCATION then
         self.grabbedCard.owner.currMana = self.grabbedCard.owner.currMana - self.grabbedCard.cost --subtract cost from current energy - technically this also will charge you if you picked up from a location and dropped on a location, but currently you can't so it's fine
@@ -52,7 +63,7 @@ function GrabberClass:update(cards, hands, locations)
       
       --print("zone type: " .. self.grabbdCard.zoneType)
     else 
-      print("returning card to original location") --return card to where it was picked up from
+      --print("returning card to original location") --return card to where it was picked up from
       --5/26/2025: next steps are putting in the return to pickup location code and finishing the release function
       self.grabbedCard.zone = self.grabbedSource
       self.grabbedCard.zoneType = self.grabbedSource.zoneType
@@ -61,11 +72,22 @@ function GrabberClass:update(cards, hands, locations)
   end
 end
 
+function GrabberClass:draw()
+  if self.mouseOver == true then
+    --offset = Vector(cardSize.x/2, -1*(cardSize.y/2))
+    love.graphics.setColor(1, 1, 0.9)
+    love.graphics.rectangle("fill", self.currentMousePos.x, self.currentMousePos.y - 50, MOUSEOVER_SIZE.x, MOUSEOVER_SIZE.y)
+    love.graphics.setColor(0, 0, 0)
+    love.graphics.setFont(descriptionFont)
+    love.graphics.printf(self.mousedOverCard.description, self.currentMousePos.x + 10, self.currentMousePos.y - 40, MOUSEOVER_SIZE.x - 10)
+  end
+end
+
 
 function GrabberClass:grab(card)
   --print("grab")
   self.grabbedSource =  card.zone
-  print(card.zone.zoneName)
+  --print(card.zone.zoneName)
   card.zone = self
   card.zoneType = ZONES.GRABBER
   self.grabbedCard = card
@@ -75,14 +97,14 @@ function GrabberClass:releaseCheck(hands, locations, cardOwner)
   cardSize = Vector(CARDWIDTH, CARDHEIGHT)
   
   for _, hand in ipairs(hands) do --check all hands if the grabbed card is overlapping
-    if detectOverlap(cardSize, HANDSIZE, self.currentMousePos, hand.position) and hand.num == cardOwner.num then --make sure that the card is being dropped on the hand of the player who owns it --4/28 4:43: Last thing done is add this second condition, previously fixed the location bugs. Next step I think is implement card power values, and an end turn button that triggers player 2 to play a random card to a location and then activates checking the difference in powers at locations
-      print("dropping on a hand")
+    if self:detectOverlap(cardSize, HANDSIZE, self.currentMousePos, hand.position) and hand.num == cardOwner.num then --make sure that the card is being dropped on the hand of the player who owns it --4/28 4:43: Last thing done is add this second condition, previously fixed the location bugs. Next step I think is implement card power values, and an end turn button that triggers player 2 to play a random card to a location and then activates checking the difference in powers at locations
+      --print("dropping on a hand")
       return hand--ZONES.HAND
     end
   end
   for _, location in ipairs(locations) do --check all 3 locations if the grabbed card is overlapping
-    if detectOverlap(cardSize, LOCATIONSIZE, self.currentMousePos, location.position) and cardOwner.currMana >= self.grabbedCard.cost and checkIfFull(location, cardOwner) == false then
-      print("dropping on a location")
+    if self:detectOverlap(cardSize, LOCATIONSIZE, self.currentMousePos, location.position) and cardOwner.currMana >= self.grabbedCard.cost and checkIfFull(location, cardOwner) == false then
+      --print("dropping on a location")
       --print(location.zoneType)
       
       return location--ZONES.LOCATION
@@ -97,7 +119,7 @@ function GrabberClass:release(zone, card)
     
     table.remove(self.grabbedSource.hand, card.index) --remove card from the cards table of the object that it was grabbed from
     zone:addCard(card)
-    print(card.zone.zoneType)
+    --print(card.zone.zoneType)
     self.grabbedCard = nil
     
 
@@ -108,26 +130,26 @@ function GrabberClass:release(zone, card)
     table.remove(self.grabbedSource.cards, card.index)
     zone:addCard(card)
     self.grabbedCard = nil
-    print("grabbed from a location")
+    --print("grabbed from a location")
     --print(card.zoneType)
     --print(card.position.x)
   else
-    print("error!")
+    --print("error!")
   end
 end
 
-function detectOverlap(size1, size2, position1, position2) --size 1 and 2 are thesizes of the two checked objects as vectors, and positions 1 and 2 are their positions
+function GrabberClass:detectOverlap(size1, size2, position1, position2) --size 1 and 2 are thesizes of the two checked objects as vectors, and positions 1 and 2 are their positions
   width1 = size1.x 
   width2 = size2.x
   height1 = size1.y 
   height2 = size2.y
   x1 = position1.x - width1/2 --the x coordinate of the top left corner: center position - the horizontal distance from the center of the object
-  y1 = position1.y - height1/2
-  x2 = position2.x - width2/2 --the y coordinate of the top left corner: center position - the vertical distance from the center of the object
+  y1 = position1.y - height1/2 --the y coordinate of the top left corner: center position - the vertical distance from the center of the object
+  x2 = position2.x - width2/2 
   y2 = position2.y - height2/2
   
   if x1 + width1 > x2 and --rightmost position of 1 is right of leftmost position of 2
-  x1 < position2.x + width2 and --leftmost position of 1 is left of rightmost position of 2
+  x1 < x2 + width2 and --leftmost position of 1 is left of rightmost position of 2
   y1 + height1 > y2 and --lowest position of 1 is below highest position of 2
   y1 < y2 + height2 --heighest position of 1 is above lowest posiiton of 2
   then
@@ -138,7 +160,7 @@ function detectOverlap(size1, size2, position1, position2) --size 1 and 2 are th
 end
 
 function checkIfFull(location, player)
-  print(LOCATION_CAP)
+  --print(LOCATION_CAP)
   if player.num == 1 then
     if #location.p1Cards > LOCATION_CAP - 1 then
       return true

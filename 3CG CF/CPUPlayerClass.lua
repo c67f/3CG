@@ -21,7 +21,7 @@ end
 
 function CPUPlayerClass:playCard(locations)
   if #self.playerObj.hand < 1 then --if there aren't cards in hand, return
-    print("no cards in cpu player's hand")
+    --print("no cards in cpu player's hand")
     return
   end
   
@@ -52,11 +52,11 @@ function CPUPlayerClass:playCard(locations)
       --print("losinglocation " .. losingLocation)
       tiedLocations = {}
       chosenLocation = nil
-      print("openLocations[1] = " .. openLocations[1]) 
-      print("locations[1].num is " .. locations[1].num)
-      print(locations[openLocations[1]]:getPowerDiff())
-      print(locations[1]:getPowerDiff())
-      print("#openLocations is " .. #openLocations)
+      --print("openLocations[1] = " .. openLocations[1]) 
+      --print("locations[1].num is " .. locations[1].num)
+      --print(locations[openLocations[1]]:getPowerDiff())
+      --print(locations[1]:getPowerDiff())
+      --print("#openLocations is " .. #openLocations)
       for i = 1, #openLocations do
 --        if losingLocation == 0 then
 --          print("losingLocation = 0")
@@ -86,13 +86,13 @@ function CPUPlayerClass:playCard(locations)
           randLocIndex = math.random(tiedLocations)
           randLoc = locations[randLocIndex]
         end
-        print("random location: " .. randLocIndex)
+        --print("random location: " .. randLocIndex)
         chosenLocation = randLoc
-        print("chosen random location: " .. chosenLocation.num)
+        --print("chosen random location: " .. chosenLocation.num)
       else
         chosenLocation = locations[losingLocation]
       end
-      print("chosenLocation: " .. chosenLocation.num)
+      --print("chosenLocation: " .. chosenLocation.num)
       
       --4: Choose the playable card with the highest power and play it to the chosen location. if a tie, the card that comes first in playableCards will be chosen
       highestPowCard = nil
@@ -103,12 +103,12 @@ function CPUPlayerClass:playCard(locations)
       end
       table.remove(self.playerObj.hand, highestPowCard.index)
       chosenLocation:addCard(highestPowCard)
-      print("played " .. highestPowCard.name .. " to location #" .. randLocIndex)
+      --print("played " .. highestPowCard.name .. " to location #" .. randLocIndex)
     else
-      print("no card to play")
+      --print("no card to play")
     end
   else
-    print("no open locations")
+    --print("no open locations")
   end
   
 end

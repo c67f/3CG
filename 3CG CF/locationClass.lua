@@ -39,17 +39,17 @@ function LocationClass:addCard(card) --hmm, I don't remove the card from it's pr
   card:setZone(self)
   --card.zoneType = 3
   if card.owner.num == 1 then
-    print("adding to p1 cards")
+    --print("adding to p1 cards")
     table.insert(self.p1Cards, card)
     card.revealed = false --set card to be face down upon being added to a location
     card.index = #self.p1Cards
   elseif card.owner.num == 2 then
-    print("adding to p2 cards")
+    --print("adding to p2 cards")
     table.insert(self.p2Cards, card)
     card.revealed = false --set card to be face down upon being added to a location
     card.index = #self.p2Cards
   else
-    print("error! tried to add a card owned by a player that isn't 1 or 2 to a location")
+    --print("error! tried to add a card owned by a player that isn't 1 or 2 to a location")
   end
 end
 
@@ -88,9 +88,9 @@ end
 
 function LocationClass:printPlayerCards(num)
   cards = self:getPlayerCards(num)
-  print("Cards at " .. self.num)
+  --print("Cards at " .. self.num)
   for _, card in ipairs(cards) do
-    print(card.name .. "index: " .. card.index)
-    print("actual index: " .. _)
+    --print(card.name .. "index: " .. card.index)
+    --print("actual index: " .. _)
   end
 end

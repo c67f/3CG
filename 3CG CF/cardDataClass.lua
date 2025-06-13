@@ -15,6 +15,7 @@ function CardDataClass:new()
   cardData.power = 1
   cardData.spriteClass = SpriteClassCardTemplate:new()
   cardData.effect = nil
+  cardData.description = "base description"
   
   return cardData
 end
@@ -24,8 +25,9 @@ end
 --Vanillas:
 CowDataClass = CardDataClass:new()
 function CowDataClass:new() 
-  print("new Wooden Cow")
+  --print("new Wooden Cow")
   self.name = "Wooden Cow"
+  self.description = "Vanilla"
   --self.spriteClass = TODO: Get different sprites for all the cards
   
   return self
@@ -36,6 +38,7 @@ function PegasusDataClass:new()
   self.name = "Pegasus"
   self.cost = 3
   self.power = 5
+  self.description = "Vanilla"
   
   return self
 end
@@ -45,6 +48,7 @@ function MinotaurDataClass:new()
   self.name = "Minotaur"
   self.cost = 5
   self.power = 9
+  self.description = "Vanilla"
   
   return self
 end
@@ -54,6 +58,7 @@ function TitanDataClass:new()
   self.name = "Titan"
   self.cost = 6
   self.power = 12
+  self.description = "Vanilla"
   
   return self
 end
@@ -66,6 +71,7 @@ function ArtemisDataClass:new()
   self.power = 4
   self.spriteClass = SpriteClassArtemis:new()
   self.effect = ArtemisEffectClass:new()
+  self.description = "When Revealed: Gain +5 power if there is exactly one enemy card here."
   
   return self
 end
@@ -77,6 +83,7 @@ function AresDataClass:new()
   self.power = 2
   --self.spriteClass = 
   self.effect = AresEffectClass:new()
+  self.description = "When Revealed: Gain +2 power for each enemy card here."
   
   return self
 end
@@ -88,6 +95,7 @@ function HeliosDataClass:new()
   self.power = 10
   --self.spriteClass =
   self.effect = HeliosEffectClass:new()
+  self.description = "End of Turn, if on the field: destroy this card"
   
   return self
 end
@@ -99,6 +107,7 @@ function DionysusDataClass:new()
   self.power = 7
   --self.spriteClass =
   self.effect = DionysusEffectClass:new()
+  self.description = "When Revealed: Gain +2 power for each of your other cards here."
 
   return self
 end
@@ -110,6 +119,7 @@ function IcarusDataClass:new()
   self.power = 0
   --self.spriteClass =
   self.effect = IcarusEffectClass:new()
+  self.description = "End of Turn, if on the field: increase own power by 1. Then, destroy self if power is greater than 6"
 
   return self
 end
@@ -121,6 +131,7 @@ function PandoraDataClass:new()
   self.power = 6
   --self.spriteClass =
   self.effect = PandoraEffectClass:new()
+  self.description = "On Reveal: if no other allied cards are at the same location, lower power by 5"
 
   return self
 end
@@ -132,6 +143,7 @@ function AtlasDataClass:new()
   self.power = 8
   --self.spriteClass =
   self.effect = AtlasEffectClass:new()
+  self.description = "End of Turn: if your side of this location is full (4 cards), lower own power by 1"
 
   return self
 end
@@ -143,6 +155,7 @@ function HerculesDataClass:new()
   self.power = 6
   --self.spriteClass =
   self.effect = HerculesEffectClass:new()
+  self.description = "On Reveal: if this card has the greatest power at this location, double own power"
 
   return self
 end
@@ -154,6 +167,7 @@ function SwordDataClass:new()
   self.power = 10
   --self.spriteClass =
   self.effect = SwordEffectClass:new()
+  self.description = "End of Turn: lose 1 power if you are not winning this location"
 
   return self
 end
@@ -165,6 +179,7 @@ function NyxDataClass:new()
   self.power = 13
   --self.spriteClass =
   self.effect = NyxEffectClass:new()
+  self.description = "On Reveal: destroy all other allied cards at this location and add their cumulative power to self"
 
   return self
 end
@@ -176,6 +191,7 @@ function PersephoneDataClass:new()
   self.power = 7
   --self.spriteClass =
   self.effect = PersephoneEffectClass:new()
+  self.description = "On Reveal: the lowest power card from your hand is discarded"
   
   return self
 end

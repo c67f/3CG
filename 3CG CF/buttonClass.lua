@@ -38,12 +38,12 @@ function TurnButtonClass:new(x, y, spriteClass)
 end
 
 function TurnButtonClass:test()
-  print("test")
+  --print("test")
 end
 
 function TurnButtonClass:draw()
-  xOffset = (BUTTON_SIZE.x*self.scale)/2 --6/11 7:09: fixed Nyx bug with dad, made start button and title screen functionality. However, there's a bug where the overlap check for a scaled button isn't correct, although for this button, not halving (BUTTON_SIZE.x*self.scale)/2 makes the overlap check correct - why?
-  yOffset = (BUTTON_SIZE.y*self.scale)/2
+  xOffset = (BUTTON_SIZE.x)/2 --6/11 7:09: fixed Nyx bug with dad, made start button and title screen functionality. However, there's a bug where the overlap check for a scaled button isn't correct, although for this button, not halving (BUTTON_SIZE.x*self.scale)/2 makes the overlap check correct - why? Edit at 6/12 9:49 pm: followup: seems to be the real problem is including self.scale - just doing buttonSize.x (or y) /2 makes things work fine. I'm not sure why, but I'm guessing something to do with how the offset parameters work in LOVE? Maybe they calculate the offset before scale?
+  yOffset = (BUTTON_SIZE.y)/2
   sprite = self.sc:getSprite(1)
   love.graphics.draw(sprite, self.position.x, self.position.y, 0, self.scale, self.scale, xOffset, yOffset)
   love.graphics.setFont(mainFont)
@@ -57,7 +57,7 @@ function TurnButtonClass:update(gameManager)
     --print(self.pressed)
   end
   mousePos = Vector(love.mouse.getX(), love.mouse.getY())
-  if detectOverlap((BUTTON_SIZE*self.scale), Vector(0,0), mousePos, self.position) and love.mouse.isDown(1) and self.pressed == false and gameManager.currentPhase == TURN_PHASE[1] and gameManager.currentPlayer == 1 then --This will need to be changed if multiplayer becomes a thing - best bet might be a combination of the currentPhase check at the start of update combined with a timer
+  if self:detectOverlap(Vector(0,0), (BUTTON_SIZE*self.scale), mousePos, self.position) and love.mouse.isDown(1) and self.pressed == false and gameManager.currentPhase == TURN_PHASE[1] and gameManager.currentPlayer == 1 then --This will need to be changed if multiplayer becomes a thing - best bet might be a combination of the currentPhase check at the start of update combined with a timer
     self.pressed = true --so that the button doesn't get pressed every frame the mouse is down
     self:press(gameManager)
   end
@@ -96,7 +96,7 @@ function StartButtonClass:update()
     self.pressed = false
   end
   mousePos = Vector(love.mouse.getX(), love.mouse.getY())
-  if detectOverlap((BUTTON_SIZE*self.scale), Vector(0,0), mousePos, self.position) and love.mouse.isDown(1) and self.pressed == false then
+  if self:detectOverlap((BUTTON_SIZE*self.scale), Vector(0,0), mousePos, self.position) and love.mouse.isDown(1) and self.pressed == false then
     self.pressed = true
     self:press()
   end
@@ -105,7 +105,7 @@ function StartButtonClass:press()
   gameStarted = true
 end
 
-function detectOverlap(size1, size2, position1, position2) --size 1 and 2 are thesizes of the two checked objects as vectors, and positions 1 and 2 are their positions
+function ButtonClass:detectOverlap(size1, size2, position1, position2) --size 1 and 2 are thesizes of the two checked objects as vectors, and positions 1 and 2 are their positions
   width1 = size1.x 
   width2 = size2.x
   height1 = size1.y 
@@ -116,7 +116,7 @@ function detectOverlap(size1, size2, position1, position2) --size 1 and 2 are th
   y2 = position2.y - height2/2
   
   if x1 + width1 > x2 and --rightmost position of 1 is right of leftmost position of 2
-  x1 < position2.x + width2 and --leftmost position of 1 is left of rightmost position of 2
+  x1 < x2 + width2 and --leftmost position of 1 is left of rightmost position of 2
   y1 + height1 > y2 and --lowest position of 1 is below highest position of 2
   y1 < y2 + height2 --heighest position of 1 is above lowest posiiton of 2
   then
