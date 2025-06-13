@@ -34,7 +34,7 @@ function LocationClass:draw()
   love.graphics.setColor(1, 1, 1)
 end
 
-function LocationClass:addCard(card)
+function LocationClass:addCard(card) --hmm, I don't remove the card from it's previous zone here but instead do that where this is called, which inconsistent with other addCard functions
   --card.zone = self
   card:setZone(self)
   --card.zoneType = 3

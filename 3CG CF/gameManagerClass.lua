@@ -14,7 +14,7 @@ TURN_PHASE = { --currently doing phases separate from player turn, but could ins
 
 HAND_SIZE = 7
 
-WIN_THRESHOLD = 500
+WIN_THRESHOLD = 900
 
 function GameManagerClass:new(player1, player2, locTable) --, spriteTable
   local gameManager = {}
